@@ -7,8 +7,7 @@ const defaultState = {
   budget: 12_000_000,
   reputation: 76,
   morale: 72,
-  objective: 'Championnat',
-  dayCounter: 1,
+  objective: 'Championnat CAF',
   players: [
     { name: 'Sadio Diop', position: 'Gardien', rating: 82 },
     { name: 'Moussa Faye', position: 'Défenseur', rating: 80 },
@@ -23,11 +22,6 @@ const defaultState = {
     { name: 'Moussa Sarr', position: 'Ailier', price: 2_200_000, rating: 86 },
     { name: 'Ndiaga Mbaye', position: 'Avant-centre', price: 2_600_000, rating: 88 },
     { name: 'Baba Mbengue', position: 'Défenseur', price: 1_200_000, rating: 80 }
-  ],
-  log: [
-    'La préparation de la semaine a commencé dans de bonnes conditions.',
-    'Le staff note une hausse de la cohésion de groupe avant le prochain match.',
-    'Le club s’appuie sur une base solide pour viser le titre national.'
   ],
   fixtures: [
     { round: 1, opponent: 'FC Thiès', home: true },
@@ -44,6 +38,17 @@ const defaultState = {
     { club: 'Renaissance Ziguinchor', played: 0, wins: 0, draws: 0, losses: 0, points: 0, gf: 0, ga: 0 },
     { club: 'Club Yoff', played: 0, wins: 0, draws: 0, losses: 0, points: 0, gf: 0, ga: 0 },
     { club: 'Amitié Sédhiou', played: 0, wins: 0, draws: 0, losses: 0, points: 0, gf: 0, ga: 0 }
+  ],
+  caf: {
+    phase: 'Quarts de finale',
+    form: 'Bonne',
+    score: '1 - 0',
+    goalDiff: 1
+  },
+  log: [
+    'La préparation de la semaine a commencé dans de bonnes conditions.',
+    'Le staff a constaté une hausse de la cohésion de groupe avant le prochain match.',
+    'Le club se prépare sérieusement pour le titre national et la Coupe CAF.'
   ]
 };
 
@@ -58,12 +63,14 @@ const dom = {
   teamList: document.querySelector('#team-list'),
   marketList: document.querySelector('#market-list'),
   fixtureBox: document.querySelector('#fixture-box'),
+  cafBox: document.querySelector('#caf-box'),
   standingsBody: document.querySelector('#standings-body'),
   log: document.querySelector('#log'),
   trainBtn: document.querySelector('#train-btn'),
   matchBtn: document.querySelector('#match-btn'),
   recruitBtn: document.querySelector('#recruit-btn'),
-  nextDayBtn: document.querySelector('#next-day-btn')
+  nextDayBtn: document.querySelector('#next-day-btn'),
+  resetBtn: document.querySelector('#reset-btn')
 };
 
 let state = loadState();
@@ -71,6 +78,7 @@ let state = loadState();
 function loadState() {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (!saved) return structuredClone(defaultState);
+
   try {
     const parsed = JSON.parse(saved);
     return { ...structuredClone(defaultState), ...parsed };
@@ -164,6 +172,7 @@ function renderMarket() {
       state.reputation += 2;
       addLog(`${name} a signé pour ${formatMoney(price)}. Le groupe est renforcé.`);
       render();
+      saveState();
     });
   });
 }
@@ -171,7 +180,13 @@ function renderMarket() {
 function renderFixture() {
   const fixture = getCurrentFixture();
   if (!fixture) {
-    dom.fixtureBox.innerHTML = '<div class="fixture-meta"><span>Fin de la phase de championnat.</span></div>';
+    dom.fixtureBox.innerHTML = `
+      <div class="fixture-meta">
+        <span>Calendrier</span>
+        <span>Terminé</span>
+      </div>
+      <div class="fixture-score">Saison clôturée</div>
+    `;
     return;
   }
 
@@ -189,10 +204,33 @@ function renderFixture() {
   `;
 }
 
+function renderCAF() {
+  dom.cafBox.innerHTML = `
+    <div class="caf-stage">
+      <span>Phase</span>
+      <strong>${state.caf.phase}</strong>
+    </div>
+    <div class="caf-stage">
+      <span>Forme</span>
+      <strong>${state.caf.form}</strong>
+    </div>
+    <div class="caf-stage">
+      <span>Dernier résultat</span>
+      <strong>${state.caf.score}</strong>
+    </div>
+    <div class="caf-stage">
+      <span>Différence</span>
+      <strong>${state.caf.goalDiff >= 0 ? '+' : ''}${state.caf.goalDiff}</strong>
+    </div>
+  `;
+}
+
 function renderStandings() {
   const rows = [...state.standings].sort((a, b) => {
     if (b.points !== a.points) return b.points - a.points;
-    if (b.gf - b.ga !== a.gf - a.ga) return (b.gf - b.ga) - (a.gf - a.ga);
+    const diffA = a.gf - a.ga;
+    const diffB = b.gf - b.ga;
+    if (diffB !== diffA) return diffB - diffA;
     return b.gf - a.gf;
   });
 
@@ -223,7 +261,7 @@ function renderHeader() {
   dom.objective.textContent = state.objective;
 }
 
-function applyGoalResult(result) {
+function applyLeagueResult(result) {
   const row = state.standings.find((team) => team.club === state.club);
   if (!row) return;
 
@@ -234,9 +272,9 @@ function applyGoalResult(result) {
   if (result.goalsFor > result.goalsAgainst) {
     row.points += 3;
     row.wins += 1;
-    addLog(`Victoire ${result.goalsFor} - ${result.goalsAgainst} face à ${result.opponent}.`);
+    addLog(`Victoire ${result.goalsFor} - ${result.goalsAgainst} contre ${result.opponent}.`);
     state.reputation += 3;
-    state.morale = clamp(state.morale + 7, 0, 100);
+    state.morale = clamp(state.morale + 8, 0, 100);
   } else if (result.goalsFor === result.goalsAgainst) {
     row.points += 1;
     row.draws += 1;
@@ -270,10 +308,25 @@ function updateOpponentTable(result) {
   }
 }
 
+function updateCAFProgress(result) {
+  const diff = result.goalsFor - result.opponentGoals;
+  state.caf.goalDiff = diff;
+  state.caf.score = `${result.goalsFor} - ${result.opponentGoals}`;
+
+  if (diff >= 0) {
+    state.caf.form = 'Bonne';
+    state.caf.phase = state.caf.phase === 'Quarts de finale' ? 'Demi-finales' : 'Finale';
+    addLog(`Le club progresse en Coupe CAF. Résultat : ${result.goalsFor} - ${result.opponentGoals}.`);
+  } else {
+    state.caf.form = 'À corriger';
+    addLog(`La Coupe CAF a été plus compliquée : ${result.goalsFor} - ${result.opponentGoals}.`);
+  }
+}
+
 function simulateMatch() {
   const fixture = getCurrentFixture();
   if (!fixture) {
-    addLog('Aucun match de programme pour l’instant.');
+    addLog('Aucun match n’est programmé pour l’instant.');
     render();
     return;
   }
@@ -291,18 +344,20 @@ function simulateMatch() {
 
   const result = {
     opponent: fixture.opponent,
-    opponentGoals,
     goalsFor: ourGoals,
-    goalsAgainst: opponentGoals
+    goalsAgainst: opponentGoals,
+    opponentGoals
   };
 
-  applyGoalResult(result);
+  applyLeagueResult(result);
   updateOpponentTable(result);
+  updateCAFProgress(result);
 
   state.fixtureIndex += 1;
   state.day += 1;
   state.budget += 180_000;
   state.reputation += 1;
+
   addLog(`Match contre ${fixture.opponent} : ${ourGoals} - ${opponentGoals}.`);
 
   render();
@@ -312,11 +367,11 @@ function simulateMatch() {
 function trainTeam() {
   state.players = state.players.map((player) => ({
     ...player,
-    rating: clamp(player.rating + (Math.random() > 0.53 ? 1 : 0), 70, 97)
+    rating: clamp(player.rating + (Math.random() > 0.5 ? 1 : 0), 70, 97)
   }));
   state.morale = clamp(state.morale + 8, 0, 100);
   state.reputation += 1;
-  addLog('L’entraînement collectif a amélioré la qualité du groupe et la confiance.');
+  addLog('L’entraînement collectif a renforcé la confiance et la qualité du groupe.');
   render();
   saveState();
 }
@@ -357,11 +412,18 @@ function recruitBestPlayer() {
   saveState();
 }
 
+function resetGame() {
+  state = structuredClone(defaultState);
+  saveState();
+  render();
+}
+
 function render() {
   renderHeader();
   renderTeam();
   renderMarket();
   renderFixture();
+  renderCAF();
   renderStandings();
   renderLog();
 }
@@ -370,6 +432,7 @@ dom.trainBtn.addEventListener('click', trainTeam);
 dom.matchBtn.addEventListener('click', simulateMatch);
 dom.recruitBtn.addEventListener('click', recruitBestPlayer);
 dom.nextDayBtn.addEventListener('click', nextDay);
+dom.resetBtn.addEventListener('click', resetGame);
 
 render();
 saveState();

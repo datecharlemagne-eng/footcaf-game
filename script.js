@@ -3,25 +3,26 @@
 }
 
 :root {
-  --bg: #0d1a2a;
-  --bg-alt: #10263f;
-  --panel: rgba(18, 35, 54, 0.95);
-  --panel-strong: rgba(20, 44, 70, 0.98);
-  --accent: #37d38d;
-  --accent-strong: #1aa569;
-  --warning: #f5c76d;
-  --danger: #ff6d6d;
-  --text: #edf5ff;
-  --muted: #9bb7d6;
-  --line: rgba(255, 255, 255, 0.08);
-  --shadow: rgba(0, 0, 0, 0.24);
+  --bg-1: #0a1624;
+  --bg-2: #112d46;
+  --panel: rgba(16, 32, 51, 0.96);
+  --panel-alt: rgba(19, 42, 65, 0.95);
+  --panel-soft: rgba(255, 255, 255, 0.02);
+  --accent: #39d78a;
+  --accent-2: #7fe7b0;
+  --warning: #f5ca67;
+  --danger: #ff6f6f;
+  --text: #edf7ff;
+  --muted: #a4bfdc;
+  --line: rgba(255, 255, 255, 0.09);
+  --shadow: rgba(0, 0, 0, 0.22);
 }
 
 html, body {
   margin: 0;
   min-height: 100%;
   font-family: Inter, "Segoe UI", sans-serif;
-  background: linear-gradient(180deg, #0d1a2a 0%, #143354 100%);
+  background: linear-gradient(180deg, var(--bg-1), var(--bg-2));
   color: var(--text);
 }
 
@@ -32,17 +33,25 @@ body {
 button {
   border: none;
   border-radius: 12px;
-  background: linear-gradient(135deg, var(--accent), #66efb1);
-  color: #062b1b;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: #062d1d;
   font-weight: 800;
   padding: 0.75rem 1rem;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: 0 8px 24px rgba(55, 211, 141, 0.2);
+  transition: transform 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 10px 22px rgba(57, 215, 138, 0.18);
 }
 
 button:hover {
   transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+button.ghost {
+  background: rgba(255,255,255,0.04);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: none;
 }
 
 .app-shell {
@@ -62,19 +71,19 @@ button:hover {
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  padding: 1.2rem 1.4rem;
-  background: rgba(16, 38, 63, 0.9);
-  border: 1px solid var(--line);
+  padding: 1.1rem 1.4rem;
   border-radius: 20px;
-  box-shadow: var(--shadow) 0 22px 40px;
+  background: rgba(16, 35, 56, 0.95);
+  border: 1px solid var(--line);
+  box-shadow: 0 24px 40px var(--shadow);
 }
 
 .eyebrow {
   margin: 0 0 0.35rem;
-  font-size: 0.72rem;
-  letter-spacing: 0.12em;
-  color: var(--muted);
   text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.7rem;
+  color: var(--muted);
 }
 
 h1, h2, h3, p {
@@ -82,11 +91,12 @@ h1, h2, h3, p {
 }
 
 h1 {
-  font-size: clamp(2rem, 3vw, 2.5rem);
+  font-size: clamp(2rem, 3vw, 2.7rem);
 }
 
 .club-badges {
   display: flex;
+  align-items: center;
   gap: 0.7rem;
   flex-wrap: wrap;
 }
@@ -97,7 +107,7 @@ h1 {
   gap: 0.3rem;
   padding: 0.6rem 0.8rem;
   border-radius: 999px;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.03);
   border: 1px solid var(--line);
   color: var(--text);
 }
@@ -110,23 +120,23 @@ h1 {
 
 .stat-card {
   padding: 1rem 1.05rem;
+  border-radius: 16px;
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 16px;
-  box-shadow: var(--shadow) 0 16px 32px;
+  box-shadow: 0 18px 30px var(--shadow);
 }
 
 .stat-card.accent {
-  background: linear-gradient(135deg, rgba(55, 211, 141, 0.18), rgba(26,165,105,0.1));
+  background: linear-gradient(135deg, rgba(57, 215, 138, 0.14), rgba(127, 231, 176, 0.08));
 }
 
 .label {
   display: block;
   color: var(--muted);
   margin-bottom: 0.45rem;
-  font-size: 0.75rem;
-  text-transform: uppercase;
+  font-size: 0.72rem;
   letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .stat-card strong {
@@ -144,11 +154,11 @@ h1 {
   border: 1px solid var(--line);
   border-radius: 20px;
   padding: 1rem;
-  box-shadow: var(--shadow) 0 20px 30px;
+  box-shadow: 0 20px 32px var(--shadow);
 }
 
 .panel.highlight {
-  background: linear-gradient(180deg, rgba(26, 54, 86, 0.95), rgba(17, 32, 52, 0.98));
+  background: linear-gradient(180deg, rgba(28, 57, 89, 0.98), rgba(16, 32, 51, 0.98));
 }
 
 .panel.wide {
@@ -159,7 +169,7 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
@@ -174,11 +184,11 @@ h1 {
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
-  gap: 0.7rem;
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.02);
+  gap: 0.75rem;
   border-radius: 14px;
   padding: 0.9rem 0.8rem;
+  background: var(--panel-soft);
+  border: 1px solid var(--line);
 }
 
 .player-meta,
@@ -191,48 +201,57 @@ h1 {
 .player-meta span,
 .market-meta span {
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
 }
 
 .rating-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 2.5rem;
-  height: 2.5rem;
+  min-width: 2.6rem;
+  height: 2.6rem;
   padding: 0.2rem 0.5rem;
   border-radius: 999px;
-  background: rgba(55, 211, 141, 0.14);
+  background: rgba(57, 215, 138, 0.12);
   color: var(--accent);
   font-weight: 800;
 }
 
-.fixture-box {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--line);
+.fixture-box,
+.caf-box {
+  display: grid;
+  gap: 0.6rem;
   border-radius: 14px;
   padding: 0.85rem 0.9rem;
-  display: grid;
-  gap: 0.5rem;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line);
 }
 
 .fixture-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 0.9rem;
+  gap: 0.8rem;
   color: var(--muted);
 }
 
 .fixture-score {
-  font-size: 1.35rem;
+  font-size: 1.3rem;
   font-weight: 800;
+}
+
+.caf-stage {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  color: var(--muted);
 }
 
 .standings-wrap {
   overflow: hidden;
-  border: 1px solid var(--line);
   border-radius: 12px;
+  border: 1px solid var(--line);
 }
 
 .standings-table {
@@ -248,15 +267,15 @@ h1 {
 }
 
 .standings-table th {
+  background: rgba(255,255,255,0.02);
   color: var(--muted);
   font-size: 0.8rem;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: rgba(255,255,255,0.02);
 }
 
 .standings-table tr.highlight-team {
-  background: rgba(55, 211, 141, 0.08);
+  background: rgba(57, 215, 138, 0.08);
 }
 
 .log-list {
@@ -268,10 +287,10 @@ h1 {
 }
 
 .log-list li {
+  padding: 0.85rem 0.9rem;
   border-radius: 12px;
   background: rgba(255,255,255,0.02);
   border: 1px solid var(--line);
-  padding: 0.85rem 0.9rem;
   color: var(--muted);
 }
 
