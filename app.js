@@ -1,652 +1,338 @@
-:root {
-  --bg: #071a29;
-  --bg-2: #0d2338;
-  --panel: rgba(17, 35, 50, 0.85);
-  --panel-strong: #12283b;
-  --line: rgba(145, 178, 207, 0.25);
-  --text: #edf5ff;
-  --muted: #9ab7d5;
-  --green: #48e8a8;
-  --gold: #ffcf70;
-  --blue: #60c1ff;
-  --rose: #ff6f8a;
-  --shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
-  --pitch: #2ba461;
-  --light-line: rgba(255,255,255,0.7);
-}
-
-* { box-sizing: border-box; }
-
-html, body {
-  margin: 0;
-  min-height: 100vh;
-  font-family: Inter, "Segoe UI", sans-serif;
-  background: linear-gradient(135deg, var(--bg), var(--bg-2));
-  color: var(--text);
-}
-
-button { font: inherit; }
-
-.app-shell {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 280px 1fr;
-}
-
-.sidebar {
-  padding: 22px 18px;
-  border-right: 1px solid var(--line);
-  background: rgba(7, 18, 29, 0.7);
-}
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--line);
-}
-
-.brand-mark {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border-radius: 14px;
-  background: linear-gradient(135deg, var(--green), #13cfe1);
-  color: #072539;
-  font-size: 1.5rem;
-  font-weight: 900;
-  box-shadow: var(--shadow);
-}
-
-.brand h1 { margin: 0; font-size: 1.4rem; }
-.brand small { color: var(--muted); }
-
-nav {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-top: 22px;
-}
-
-.nav-btn, .ghost-btn, .primary-btn, .secondary-btn {
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,0.02);
-  color: var(--text);
-  border-radius: 12px;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.nav-btn:hover, .ghost-btn:hover, .primary-btn:hover, .secondary-btn:hover {
-  transform: translateY(-1px);
-  border-color: rgba(96,193,255,0.7);
-}
-
-.nav-btn.active {
-  border-color: rgba(96,193,255,0.7);
-  background: linear-gradient(135deg, rgba(96,193,255,0.15), rgba(72,232,168,0.12));
-}
-
-.mini-panel {
-  margin-top: 30px;
-  padding: 16px 14px;
-  border-radius: 16px;
-  border: 1px solid var(--line);
-  background: rgba(18, 40, 59, 0.9);
-  box-shadow: var(--shadow);
-}
-
-.mini-panel h3 { margin-top: 0; }
-
-.primary-btn {
-  width: 100%;
-  margin-top: 14px;
-  border: none;
-  background: linear-gradient(135deg, var(--green), #1ec69e);
-  color: #062f22;
-  font-weight: 800;
-}
-
-.secondary-btn {
-  width: 100%;
-  margin-top: 10px;
-  background: rgba(255,255,255,0.05);
-}
-
-.main-panel {
-  padding: 28px;
-}
-
-.topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.eyebrow {
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.72rem;
-  color: var(--muted);
-  margin: 0 0 8px;
-}
-
-.topbar h2 {
-  margin: 0;
-  font-size: clamp(1.8rem, 2vw, 2.2rem);
-}
-
-.top-meta {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.chip {
-  padding: 8px 12px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--line);
-  color: var(--muted);
-}
-
-.chip.accent {
-  background: rgba(255,207,112,0.1);
-  color: var(--gold);
-  border-color: rgba(255,207,112,0.4);
-}
-
-.screen {
-  display: none;
-}
-
-.screen.active {
-  display: block;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 20px;
-}
-
-.stat-card,
-.panel-block,
-.player-card,
-.recruit-card,
-.finance-card,
-.competition-card,
-.career-card,
-.database-card {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  box-shadow: var(--shadow);
-}
-
-.stat-card {
-  padding: 18px;
-}
-
-.stat-card label {
-  display: block;
-  margin-bottom: 12px;
-  color: var(--muted);
-  font-size: 0.8rem;
-}
-
-.stat-card strong {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 2rem;
-}
-
-.stat-card small {
-  color: var(--muted);
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 18px;
-}
-
-.panel-block {
-  padding: 18px;
-}
-
-.section-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-}
-
-.section-head h3 {
-  margin: 0;
-  font-size: 1.15rem;
-}
-
-.agenda-list,
-.notification-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 10px;
-}
-
-.agenda-list li,
-.notification-list li {
-  display: flex;
-  gap: 12px;
-  padding: 12px 14px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: rgba(255,255,255,0.02);
-}
-
-.agenda-list li::before {
-  content: "•";
-  color: var(--blue);
-  font-size: 1.4rem;
-  line-height: 1;
-}
-
-.notification-list li::before {
-  content: "!";
-  display: inline-grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: rgba(255,111,138,0.12);
-  color: var(--rose);
-  font-weight: 800;
-}
-
-.card-list {
-  display: grid;
-  gap: 16px;
-}
-
-.player-card,
-.recruit-card,
-.finance-card,
-.competition-card,
-.database-card,
-.career-card {
-  padding: 18px;
-}
-
-.player-card {
-  display: grid;
-  grid-template-columns: 1.3fr 1fr 1fr 1fr auto;
-  align-items: center;
-  gap: 14px;
-}
-
-.player-header { display: flex; flex-direction: column; gap: 4px; }
-.player-header strong { font-size: 1.08rem; }
-.meta { color: var(--muted); font-size: 0.82rem; }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 84px;
-  padding: 8px 10px;
-  border-radius: 999px;
-  font-size: 0.74rem;
-  font-weight: 700;
-  border: 1px solid var(--line);
-}
-
-.badge.green { background: rgba(72,232,168,0.12); color: var(--green); }
-.badge.gold { background: rgba(255,207,112,0.12); color: var(--gold); }
-.badge.blue { background: rgba(96,193,255,0.12); color: var(--blue); }
-
-.action-btn {
-  border: none;
-  background: linear-gradient(135deg, var(--blue), #2f90ff);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.table-wrapper {
-  overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid var(--line);
-  background: rgba(18, 40, 59, 0.9);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-th, td {
-  padding: 12px 14px;
-  text-align: left;
-  border-bottom: 1px solid var(--line);
-}
-
-th {
-  background: rgba(255,255,255,0.02);
-  color: var(--muted);
-}
-
-tr:last-child td { border-bottom: none; }
-
-.career-layout {
-  display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 18px;
-}
-
-.player-summary {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.player-summary .player-name {
-  font-size: 1.5rem;
-  font-weight: 800;
-}
-
-.progress-block {
-  margin-top: 12px;
-}
-
-.progress-label {
-  display: flex;
-  justify-content: space-between;
-  color: var(--muted);
-  font-size: 0.82rem;
-  margin-bottom: 8px;
-}
-
-.progress-bar {
-  position: relative;
-  width: 100%;
-  height: 12px;
-  border-radius: 999px;
-  overflow: hidden;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid var(--line);
-}
-
-.progress-bar span {
-  position: absolute;
-  inset: 0 auto 0 0;
-  border-radius: inherit;
-  background: linear-gradient(90deg, var(--green), var(--blue));
-}
-
-.match-stage {
-  display: grid;
-  grid-template-columns: 1.5fr 0.8fr;
-  gap: 18px;
-}
-
-.pitch {
-  position: relative;
-  height: 420px;
-  border-radius: 22px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #1f9d5c, var(--pitch));
-  border: 8px solid #dfe8ee;
-  box-shadow: var(--shadow);
-  transform: perspective(1200px) rotateX(8deg);
-}
-
-.pitch-line {
-  position: absolute;
-  border: 2px solid var(--light-line);
-}
-
-.center-line {
-  top: 0;
-  left: 50%;
-  width: 0;
-  height: 100%;
-  transform: translateX(-50%);
-}
-
-.center-circle {
-  top: 50%;
-  left: 50%;
-  width: 110px;
-  height: 110px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-}
-
-.box {
-  width: 120px;
-  height: 180px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.left-box { left: 0; border-left: none; }
-.right-box { right: 0; border-right: none; }
-
-.player {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-  border: 2px solid rgba(0,0,0,0.2);
-}
-
-.player.p1 { left: 18%; top: 30%; }
-.player.p2 { left: 25%; top: 62%; }
-.player.p3 { left: 42%; top: 46%; }
-.player.p4 { left: 58%; top: 28%; }
-.player.p5 { left: 62%; top: 68%; }
-.player.enemy { background: #12283b; border-color: rgba(255,255,255,0.15); }
-.player.enemy.e1 { right: 18%; top: 30%; }
-.player.enemy.e2 { right: 25%; top: 62%; }
-.player.enemy.e3 { right: 42%; top: 46%; }
-.player.enemy.e4 { right: 58%; top: 28%; }
-.player.enemy.e5 { right: 62%; top: 68%; }
-
-.ball {
-  position: absolute;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  background: #f9f9f9;
-  box-shadow: 0 0 10px rgba(255,255,255,0.6);
-}
-
-.match-panel {
-  background: rgba(18, 40, 59, 0.9);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 18px;
-}
-
-.scoreboard {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.95rem;
-  margin-bottom: 16px;
-  color: var(--muted);
-}
-
-.scoreboard strong {
-  color: var(--text);
-  font-size: 1.4rem;
-}
-
-.match-log {
-  display: grid;
-  gap: 10px;
-  font-size: 0.9rem;
-  color: var(--muted);
-}
-
-.database-grid,
-.finance-grid,
-.competition-grid {
-  display: grid;
-  gap: 16px;
-}
-
-.database-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.finance-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-.metric-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  color: var(--muted);
-}
-
-.metric-row strong { color: var(--text); }
-
-@media (max-width: 1040px) {
-  .app-shell { grid-template-columns: 1fr; }
-  .sidebar { border-right: none; border-bottom: 1px solid var(--line); }
-  .stats-grid, .content-grid, .career-layout, .match-stage, .database-grid, .finance-grid { grid-template-columns: 1fr; }
-  .player-card { grid-template-columns: 1fr 1fr; }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+const STORAGE_KEY = 'footcaf-save-v1';
+const DATA = window.FOOTCAF && window.FOOTCAF.DATA ? window.FOOTCAF.DATA : {
+  nations: [], academies: [], tournaments: [], referees: [], commentators: []
+};
+
+const defaultState = {
+  clubName: 'Raja CA',
+  budget: 18500000,
+  reputation: 78,
+  teamValue: 64200000,
+  form: 7.8,
+  week: 12,
+  season: '2026/27',
+  players: [
+    { name: 'Yassine Bounou', position: 'Gardien', age: 33, ovr: 82, potential: 84, value: 9500000, status: 'Titulaire' },
+    { name: 'Nayef Aguerd', position: 'Défenseur', age: 29, ovr: 80, potential: 82, value: 8200000, status: 'Titulaire' },
+    { name: 'Azzedine Ounahi', position: 'Milieu', age: 27, ovr: 81, potential: 84, value: 15000000, status: 'Tête d’affiche' },
+    { name: 'Youssef En-Nesyri', position: 'Attaquant', age: 26, ovr: 83, potential: 85, value: 22000000, status: 'Buteur' },
+    { name: 'M. Boussoufa', position: 'Milieu', age: 31, ovr: 75, potential: 76, value: 2600000, status: 'Expérimenté' },
+    { name: 'S. El Moutaraji', position: 'Attaquant', age: 22, ovr: 74, potential: 82, value: 9000000, status: 'Prometteur' }
+  ],
+  recruitment: [
+    { name: 'Hamza El Aouad', age: 18, position: 'Milieu', country: 'Maroc', potential: 85, fee: 4200000, trend: 'Très demandé' },
+    { name: 'Amine Benslimane', age: 17, position: 'Défenseur', country: 'Algérie', potential: 82, fee: 3100000, trend: 'Scouts actifs' },
+    { name: 'Lamine Diop', age: 19, position: 'Ailier', country: 'Sénégal', potential: 84, fee: 5200000, trend: 'Forme excellente' },
+    { name: 'Koffi Kone', age: 20, position: 'Attaquant', country: 'Côte d’Ivoire', potential: 86, fee: 6100000, trend: 'Client premium' }
+  ],
+  leagueTable: [
+    { club: 'Raja CA', points: 31, gp: 16, ga: 6 },
+    { club: 'Wydad AC', points: 29, gp: 15, ga: 7 },
+    { club: 'AS FAR', points: 27, gp: 13, ga: 8 },
+    { club: 'RS Berkane', points: 25, gp: 11, ga: 9 },
+    { club: 'FUS Rabat', points: 22, gp: 10, ga: 11 },
+    { club: 'MAS Fès', points: 20, gp: 9, ga: 11 }
+  ],
+  leaderboard: [
+    { rank: 1, club: 'Al Ahly SC', country: 'Égypte', points: 1905 },
+    { rank: 2, club: 'Wydad AC', country: 'Maroc', points: 1856 },
+    { rank: 3, club: 'Mamelodi Sundowns', country: 'Afrique du Sud', points: 1798 },
+    { rank: 4, club: 'Raja CA', country: 'Maroc', points: 1760 },
+    { rank: 5, club: 'TP Mazembe', country: 'RDC', points: 1710 }
+  ],
+  competitions: [
+    { name: 'CAF Champions League', stage: 'Huitièmes', teams: '16 clubs', status: 'Qualifié' },
+    { name: 'Coupe Nationale', stage: 'Demi-finale', teams: '8 clubs', status: 'En cours' },
+    { name: 'Ligue des Nations Africaines', stage: 'Phase de groupes', teams: '12 nations', status: 'Actif' },
+    { name: 'CAN U23', stage: 'Tour prélim.', teams: '24 nations', status: 'À suivre' }
+  ],
+  notifications: [
+    'Le jeune talent Hamza El Aouad a reçu une offre de l’USM Alger.',
+    'Un sponsor régional a prolongé son contrat de partenariat pour 2 ans.',
+    'Le club a amélioré son centre de formation pour +8% d’efficacité.',
+    'L’équipe nationale a convoqué deux joueurs du centre de formation.'
+  ],
+  agenda: [
+    'Entraînement tactique de transition offensive.',
+    'Rencontre de préparation contre le MAS Fès.',
+    'Réunion avec les agents pour les prolongations.',
+    'Déplacement en Afrique du Nord pour le tour de CAF.'
+  ],
+  finances: {
+    revenues: { sponsors: 4300000, tv: 2800000, tickets: 2100000, transfers: 1500000 },
+    expenses: { salaries: 6400000, training: 980000, transfers: 1300000, facilities: 820000 }
+  },
+  playerCareer: {
+    name: 'Youssef El Amrani',
+    age: 17,
+    country: 'Maroc',
+    role: 'Ailier / Attaquant',
+    academy: 'Académie Mohammed VI',
+    progress: 62,
+    overall: 75,
+    potential: 88
+  },
+  liveScore: '2 - 1',
+  matchLog: [
+    'Youssef En-Nesyri ouvre le score à la 17e minute.',
+    'Le Wydad égalise par faute de main dans la surface.',
+    'Azzedine Ounahi remet Raja devant à la 64e minute.'
+  ]
+};
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return structuredClone(defaultState);
+  try {
+    return { ...structuredClone(defaultState), ...JSON.parse(raw) };
+  } catch {
+    return structuredClone(defaultState);
+  }
+}
+
+let state = loadState();
+
+const formatCurrency = (value) => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0
+  }).format(value);
+};
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function renderStats() {
+  document.getElementById('budgetValue').textContent = formatCurrency(state.budget);
+  document.getElementById('reputationValue').textContent = state.reputation;
+  document.getElementById('teamValue').textContent = formatCurrency(state.teamValue);
+  document.getElementById('formValue').textContent = state.form.toFixed(1);
+  document.getElementById('clubName').textContent = state.clubName;
+}
+
+function renderAgenda() {
+  const agendaList = document.getElementById('agendaList');
+  agendaList.innerHTML = state.agenda.map(item => `<li>${item}</li>`).join('');
+}
+
+function renderNotifications() {
+  const notificationsList = document.getElementById('notificationsList');
+  notificationsList.innerHTML = state.notifications.map(item => `<li>${item}</li>`).join('');
+}
+
+function renderPlayers() {
+  const playersList = document.getElementById('playersList');
+  playersList.innerHTML = state.players.map(player => `
+    <div class="player-card">
+      <div class="player-header">
+        <strong>${player.name}</strong>
+        <span class="meta">${player.position} • ${player.age} ans</span>
+      </div>
+      <div>
+        <div class="meta">Note globale</div>
+        <strong>${player.ovr}</strong>
+      </div>
+      <div>
+        <div class="meta">Potentiel</div>
+        <strong>${player.potential}</strong>
+      </div>
+      <div>
+        <div class="meta">Valeur</div>
+        <strong>${formatCurrency(player.value)}</strong>
+      </div>
+      <span class="badge ${player.status.includes('Buteur') || player.status.includes('Tête') ? 'gold' : 'green'}">${player.status}</span>
+    </div>
+  `).join('');
+}
+
+function renderCareer() {
+  const summary = document.getElementById('careerSummary');
+  summary.innerHTML = `
+    <div class="meta">Profil du joueur</div>
+    <div class="player-name">${state.playerCareer.name}</div>
+    <div class="meta">${state.playerCareer.age} ans • ${state.playerCareer.country}</div>
+    <div class="meta">Rôle: ${state.playerCareer.role}</div>
+    <div class="meta">Académie: ${state.playerCareer.academy}</div>
+    <div class="metric-row"><span>Overall</span><strong>${state.playerCareer.overall}</strong></div>
+    <div class="metric-row"><span>Potentiel</span><strong>${state.playerCareer.potential}</strong></div>
+    <div class="metric-row"><span>Progression</span><strong>${state.playerCareer.progress}%</strong></div>
+  `;
+}
+
+function renderLeaderboard() {
+  const leaderboardTable = document.getElementById('leaderboardTable');
+  const rows = state.leaderboard.map(item => `
+    <tr>
+      <td>${item.rank}</td>
+      <td>${item.club}</td>
+      <td>${item.country}</td>
+      <td>${item.points}</td>
+    </tr>
+  `).join('');
+
+  leaderboardTable.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Club</th>
+          <th>Pays</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+function renderDatabase() {
+  const databaseList = document.getElementById('databaseList');
+  databaseList.innerHTML = DATA.nations.map(country => `
+    <div class="database-card">
+      <h4>${country.country}</h4>
+      <div class="meta">${country.region} • ${country.league}</div>
+      <div class="metric-row"><span>Fédération</span><strong>${country.federation}</strong></div>
+      <div class="metric-row"><span>Sélectionneur</span><strong>${country.selector}</strong></div>
+      <ul>
+        ${country.clubs.map(club => `<li>${club}</li>`).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
+function renderFinance() {
+  const financePanel = document.getElementById('financePanel');
+  const totalRevenues = Object.values(state.finances.revenues).reduce((a, b) => a + b, 0);
+  const totalExpenses = Object.values(state.finances.expenses).reduce((a, b) => a + b, 0);
+
+  financePanel.innerHTML = `
+    <div class="finance-card">
+      <h4>Revenus</h4>
+      ${Object.entries(state.finances.revenues).map(([key, value]) => `
+        <div class="metric-row"><span>${key}</span><strong>${formatCurrency(value)}</strong></div>
+      `).join('')}
+      <hr />
+      <div class="metric-row"><span>Total</span><strong>${formatCurrency(totalRevenues)}</strong></div>
+    </div>
+    <div class="finance-card">
+      <h4>Dépenses</h4>
+      ${Object.entries(state.finances.expenses).map(([key, value]) => `
+        <div class="metric-row"><span>${key}</span><strong>${formatCurrency(value)}</strong></div>
+      `).join('')}
+      <hr />
+      <div class="metric-row"><span>Total</span><strong>${formatCurrency(totalExpenses)}</strong></div>
+    </div>
+    <div class="finance-card">
+      <h4>Solde net</h4>
+      <div class="stat-card" style="padding: 12px 0 0; background: transparent; border: none; box-shadow: none;">
+        <strong style="font-size: 2rem;">${formatCurrency(totalRevenues - totalExpenses)}</strong>
+        <small>Après coûts</small>
+      </div>
+    </div>
+  `;
+}
+
+function renderMatch() {
+  document.getElementById('liveScore').textContent = state.liveScore;
+  document.getElementById('matchLog').innerHTML = state.matchLog.map(line => `<div>• ${line}</div>`).join('');
+}
+
+function renderAll() {
+  renderStats();
+  renderAgenda();
+  renderNotifications();
+  renderPlayers();
+  renderCareer();
+  renderLeaderboard();
+  renderDatabase();
+  renderFinance();
+  renderMatch();
+}
+
+function simulateWeek() {
+  state.week += 1;
+  state.form = +(Math.random() * 1.8 + 7.1).toFixed(1);
+  state.budget += Math.random() * 800000 + 250000;
+  state.reputation = Math.min(99, state.reputation + 1);
+  state.notifications.unshift(`Résultat du week-end : victoire 2-1 contre une équipe rivale, +${formatCurrency(600000)} de revenus publicitaires.`);
+  state.notifications = state.notifications.slice(0, 6);
+  state.agenda.push('Un club européen a demandé un entretien pour l’un de vos jeunes talents.');
+  state.agenda = state.agenda.slice(-4);
+  saveState();
+  renderAll();
+}
+
+function advanceWeek() {
+  simulateWeek();
+}
+
+function trainPlayers() {
+  state.players = state.players.map(player => ({
+    ...player,
+    ovr: Math.min(96, player.ovr + 1),
+    potential: Math.min(96, player.potential + 1)
+  }));
+  state.notifications.unshift('Le centre de formation a accéléré le développement des jeunes joueurs.');
+  state.notifications = state.notifications.slice(0, 6);
+  saveState();
+  renderAll();
+}
+
+function playMatch() {
+  const homeGoals = Math.floor(Math.random() * 3 + 1);
+  const awayGoals = Math.floor(Math.random() * 2 + 0);
+  state.liveScore = `${homeGoals} - ${awayGoals}`;
+  state.matchLog = [
+    `${homeGoals > awayGoals ? 'Raja CA' : 'Wydad AC'} domine l’échange technique et marque le point décisif.`,
+    'Le public a vibré dans les derniers instants du match.',
+    'Le club sécurise son avance avant la fin de la rencontre.'
+  ];
+  if (homeGoals >= awayGoals) {
+    state.notifications.unshift('Victoire solide à domicile, le club gagne du prestige et des points.');
+  } else {
+    state.notifications.unshift('Match disputé mais le club repart avec un point précieux.');
+  }
+  state.notifications = state.notifications.slice(0, 6);
+  saveState();
+  renderAll();
+}
+
+function refreshLeaderboard() {
+  state.leaderboard = state.leaderboard.map((entry, index) => ({
+    ...entry,
+    points: entry.points + (index === 0 ? 10 : 6),
+    rank: index + 1
+  })).sort((a, b) => b.points - a.points).map((entry, index) => ({ ...entry, rank: index + 1 }));
+  state.notifications.unshift('Le classement mondial a été mis à jour en temps réel.');
+  state.notifications = state.notifications.slice(0, 6);
+  saveState();
+  renderAll();
+}
+
+const navButtons = document.querySelectorAll('.nav-btn');
+navButtons.forEach(button => {
+  button.addEventListener('click', () => {
+    navButtons.forEach(btn => btn.classList.remove('active'));
+    button.classList.add('active');
+    const tab = button.dataset.tab;
+    document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+    document.getElementById(tab).classList.add('active');
+  });
+});
+
+document.getElementById('simulateWeekBtn').addEventListener('click', simulateWeek);
+document.getElementById('advanceWeekBtn').addEventListener('click', advanceWeek);
+document.getElementById('trainPlayersBtn').addEventListener('click', trainPlayers);
+document.getElementById('playMatchBtn').addEventListener('click', playMatch);
+document.getElementById('refreshLeaderboardBtn').addEventListener('click', refreshLeaderboard);
+document.getElementById('saveGameBtn').addEventListener('click', () => {
+  saveState();
+  state.notifications.unshift('Progression sauvegardée localement avec succès.');
+  state.notifications = state.notifications.slice(0, 6);
+  renderAll();
+});
+
+renderAll();
+console.log('Foot CAF loaded.');
