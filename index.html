@@ -3,17 +3,24 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FootCAF</title>
+    <title>FootCAF - Gestion</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app">
-      <header class="topbar">
-        <div>
-          <p class="label">Club</p>
-          <h1 id="club-name">AS Dakar</h1>
+    <div class="app-shell">
+      <header class="header">
+        <div class="club-header">
+          <div>
+            <p class="eyebrow">Club</p>
+            <h1 id="club-name">AS Dakar</h1>
+          </div>
+          <div class="club-badges">
+            <span class="chip">Saison <strong id="season">2026</strong></span>
+            <span class="chip">Jour <strong id="day">1</strong></span>
+          </div>
         </div>
-        <div class="stats">
+
+        <div class="stats-grid">
           <div class="stat-card">
             <span class="label">Budget</span>
             <strong id="budget">€0</strong>
@@ -26,51 +33,60 @@
             <span class="label">Moral</span>
             <strong id="morale">0%</strong>
           </div>
-          <div class="stat-card">
-            <span class="label">Saison</span>
-            <strong id="season">2026</strong>
+          <div class="stat-card accent">
+            <span class="label">Objectif</span>
+            <strong id="objective">Championnat</strong>
           </div>
         </div>
       </header>
 
-      <main class="dashboard">
+      <main class="main-grid">
         <section class="panel">
-          <div class="panel-header">
+          <div class="panel-head">
             <h2>Équipe</h2>
             <button id="train-btn">Entraînement</button>
           </div>
           <div id="team-list" class="team-list"></div>
         </section>
 
-        <section class="panel">
-          <div class="panel-header">
-            <h2>Compétitions</h2>
-            <button id="match-btn">Jouer un match</button>
+        <section class="panel highlight">
+          <div class="panel-head">
+            <h2>Calendrier</h2>
+            <button id="match-btn">Jouer le match</button>
           </div>
-          <div class="competition-grid">
-            <div class="competition-card">
-              <h3>Championnat national</h3>
-              <p>Points: <strong id="league-points">0</strong></p>
-              <p>Classement: <strong id="league-rank">1e</strong></p>
-            </div>
-            <div class="competition-card">
-              <h3>Coupe CAF</h3>
-              <p>Phase: <strong id="caf-stage">Quart de finale</strong></p>
-              <p>Forme: <strong id="caf-form">Bonne</strong></p>
-            </div>
+          <div id="fixture-box" class="fixture-box"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Classement</h2>
+          </div>
+          <div class="standings-wrap">
+            <table class="standings-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Club</th>
+                  <th>Pts</th>
+                  <th>J</th>
+                  <th>Diff</th>
+                </tr>
+              </thead>
+              <tbody id="standings-body"></tbody>
+            </table>
           </div>
         </section>
 
         <section class="panel">
-          <div class="panel-header">
+          <div class="panel-head">
             <h2>Mercato</h2>
-            <button id="recruit-btn">Recruter</button>
+            <button id="recruit-btn">Signer le meilleur</button>
           </div>
           <div id="market-list" class="market-list"></div>
         </section>
 
         <section class="panel wide">
-          <div class="panel-header">
+          <div class="panel-head">
             <h2>Journal de bord</h2>
             <button id="next-day-btn">Jour suivant</button>
           </div>

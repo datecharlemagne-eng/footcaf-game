@@ -1,197 +1,289 @@
-const clubName = document.querySelector('#club-name');
-const budgetEl = document.querySelector('#budget');
-const reputationEl = document.querySelector('#reputation');
-const moraleEl = document.querySelector('#morale');
-const seasonEl = document.querySelector('#season');
-const leaguePointsEl = document.querySelector('#league-points');
-const leagueRankEl = document.querySelector('#league-rank');
-const cafStageEl = document.querySelector('#caf-stage');
-const cafFormEl = document.querySelector('#caf-form');
-const teamListEl = document.querySelector('#team-list');
-const marketListEl = document.querySelector('#market-list');
-const logEl = document.querySelector('#log');
-
-const state = {
-  club: 'AS Dakar',
-  budget: 11200000,
-  reputation: 78,
-  morale: 72,
-  season: 2026,
-  leaguePoints: 18,
-  leagueRank: 2,
-  cafStage: 'Quart de finale',
-  cafForm: 'Bonne',
-  day: 1,
-  players: [
-    { name: 'Sadio Diop', position: 'Gardien', rating: 82 },
-    { name: 'Moussa Faye', position: 'Défenseur', rating: 80 },
-    { name: 'Mamadou Cissé', position: 'Défenseur', rating: 78 },
-    { name: 'Ibrahima Ndao', position: 'Milieu', rating: 81 },
-    { name: 'Khalid Samb', position: 'Milieu', rating: 79 },
-    { name: 'Yacine Fall', position: 'Attaquant', rating: 84 },
-    { name: 'Ablaye Diagna', position: 'Attaquant', rating: 82 },
-  ],
-  market: [
-    { name: 'Lamine Kébé', position: 'Milieu', price: 1500000, rating: 85 },
-    { name: 'Moussa Sarr', position: 'Ailier', price: 2200000, rating: 86 },
-    { name: 'Ndiaga Mbaye', position: 'Avant-centre', price: 2600000, rating: 88 }
-  ],
-  log: [
-    'Le club a repris l’entraînement après une préparation solide.',
-    'La dynamique de groupe est positive avant le prochain match.',
-    'Le staff technique met l’accent sur la finition devant le but.'
-  ]
-};
-
-function formatMoney(value) {
-  return new Intl.NumberFormat('fr-FR', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0
-  }).format(value);
+* {
+  box-sizing: border-box;
 }
 
-function addLog(message) {
-  state.log.unshift(message);
-  if (state.log.length > 8) state.log.pop();
-  renderLog();
+:root {
+  --bg: #0d1a2a;
+  --bg-alt: #10263f;
+  --panel: rgba(18, 35, 54, 0.95);
+  --panel-strong: rgba(20, 44, 70, 0.98);
+  --accent: #37d38d;
+  --accent-strong: #1aa569;
+  --warning: #f5c76d;
+  --danger: #ff6d6d;
+  --text: #edf5ff;
+  --muted: #9bb7d6;
+  --line: rgba(255, 255, 255, 0.08);
+  --shadow: rgba(0, 0, 0, 0.24);
 }
 
-function renderTeam() {
-  teamListEl.innerHTML = state.players
-    .map(
-      (player) => `
-        <div class="player-card">
-          <div class="player-meta">
-            <strong>${player.name}</strong>
-            <span>${player.position}</span>
-          </div>
-          <span class="badge">${player.rating}</span>
-        </div>
-      `
-    )
-    .join('');
+html, body {
+  margin: 0;
+  min-height: 100%;
+  font-family: Inter, "Segoe UI", sans-serif;
+  background: linear-gradient(180deg, #0d1a2a 0%, #143354 100%);
+  color: var(--text);
 }
 
-function renderMarket() {
-  marketListEl.innerHTML = state.market
-    .map(
-      (player) => `
-        <div class="market-card">
-          <div class="market-meta">
-            <strong>${player.name}</strong>
-            <span>${player.position} • ${player.rating} ★</span>
-          </div>
-          <button data-player="${player.name}" data-price="${player.price}">Signer • ${formatMoney(player.price)}</button>
-        </div>
-      `
-    )
-    .join('');
-
-  marketListEl.querySelectorAll('button').forEach((button) => {
-    button.addEventListener('click', () => {
-      const name = button.dataset.player;
-      const price = Number(button.dataset.price);
-      const target = state.market.find((player) => player.name === name);
-
-      if (!target) return;
-
-      if (state.budget < price) {
-        addLog(`Le recrutement de ${name} est refusé : budget insuffisant.`);
-        return;
-      }
-
-      state.budget -= price;
-      state.players.push({
-        name: target.name,
-        position: target.position,
-        rating: target.rating
-      });
-      state.market = state.market.filter((player) => player.name !== name);
-      state.reputation += 2;
-      addLog(`${name} a signé au club pour ${formatMoney(price)}.`);
-      render();
-    });
-  });
+body {
+  min-height: 100vh;
 }
 
-function renderLog() {
-  logEl.innerHTML = state.log.map((entry) => `<li>${entry}</li>`).join('');
+button {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #66efb1);
+  color: #062b1b;
+  font-weight: 800;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 8px 24px rgba(55, 211, 141, 0.2);
 }
 
-function renderStats() {
-  clubName.textContent = state.club;
-  budgetEl.textContent = formatMoney(state.budget);
-  reputationEl.textContent = state.reputation;
-  moraleEl.textContent = `${state.morale}%`;
-  seasonEl.textContent = state.season;
-  leaguePointsEl.textContent = state.leaguePoints;
-  leagueRankEl.textContent = `${state.leagueRank}e`;
-  cafStageEl.textContent = state.cafStage;
-  cafFormEl.textContent = state.cafForm;
+button:hover {
+  transform: translateY(-1px);
 }
 
-function simulateMatch() {
-  const teamStrength = state.players.reduce((sum, player) => sum + player.rating, 0) / state.players.length;
-  const homeScore = Math.max(0, Math.round(teamStrength / 18 + Math.random() * 2 - 0.8));
-  const awayScore = Math.max(0, Math.round((teamStrength - 8) / 18 + Math.random() * 2 - 1.2));
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
 
-  const resultText = homeScore >= awayScore
-    ? `Victoire ${homeScore} - ${awayScore} à domicile.`
-    : `Défaite ${homeScore} - ${awayScore}.`;
+.header {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
 
-  if (homeScore >= awayScore) {
-    state.leaguePoints += 3;
-    state.reputation += 3;
-    state.morale = Math.min(100, state.morale + 8);
-  } else {
-    state.morale = Math.max(30, state.morale - 6);
-    state.reputation = Math.max(20, state.reputation - 1);
+.club-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.4rem;
+  background: rgba(16, 38, 63, 0.9);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: var(--shadow) 0 22px 40px;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+h1, h2, h3, p {
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(2rem, 3vw, 2.5rem);
+}
+
+.club-badges {
+  display: flex;
+  gap: 0.7rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--line);
+  color: var(--text);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  padding: 1rem 1.05rem;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  box-shadow: var(--shadow) 0 16px 32px;
+}
+
+.stat-card.accent {
+  background: linear-gradient(135deg, rgba(55, 211, 141, 0.18), rgba(26,165,105,0.1));
+}
+
+.label {
+  display: block;
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.stat-card strong {
+  font-size: 1.08rem;
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(290px, 1fr));
+  gap: 1rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 1rem;
+  box-shadow: var(--shadow) 0 20px 30px;
+}
+
+.panel.highlight {
+  background: linear-gradient(180deg, rgba(26, 54, 86, 0.95), rgba(17, 32, 52, 0.98));
+}
+
+.panel.wide {
+  grid-column: 1 / -1;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.team-list,
+.market-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.player-card,
+.market-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 0.7rem;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,0.02);
+  border-radius: 14px;
+  padding: 0.9rem 0.8rem;
+}
+
+.player-meta,
+.market-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.player-meta span,
+.market-meta span {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.rating-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  background: rgba(55, 211, 141, 0.14);
+  color: var(--accent);
+  font-weight: 800;
+}
+
+.fixture-box {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0.85rem 0.9rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.fixture-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--muted);
+}
+
+.fixture-score {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.standings-wrap {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 0.75rem 0.65rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+
+.standings-table th {
+  color: var(--muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: rgba(255,255,255,0.02);
+}
+
+.standings-table tr.highlight-team {
+  background: rgba(55, 211, 141, 0.08);
+}
+
+.log-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.log-list li {
+  border-radius: 12px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--line);
+  padding: 0.85rem 0.9rem;
+  color: var(--muted);
+}
+
+@media (max-width: 840px) {
+  .stats-grid,
+  .main-grid {
+    grid-template-columns: 1fr;
   }
 
-  addLog(`Match de championnat : ${resultText}`);
-  render();
-}
-
-function trainTeam() {
-  state.morale = Math.min(100, state.morale + 10);
-  state.reputation += 1;
-  state.players = state.players.map((player) => ({
-    ...player,
-    rating: Math.min(97, player.rating + (Math.random() > 0.5 ? 1 : 0))
-  }));
-  addLog('L’entraînement a renforcé la cohésion et la qualité technique du groupe.');
-  render();
-}
-
-function nextDay() {
-  state.day += 1;
-  state.budget += 180000;
-  state.morale = Math.max(45, state.morale - 2);
-  state.reputation += 1;
-  addLog(`Jour ${state.day} : les préparatifs du prochain rendez-vous sportif avancent.`);
-  render();
-}
-
-function render() {
-  renderStats();
-  renderTeam();
-  renderMarket();
-  renderLog();
-}
-
-document.querySelector('#match-btn').addEventListener('click', simulateMatch);
-document.querySelector('#train-btn').addEventListener('click', trainTeam);
-document.querySelector('#recruit-btn').addEventListener('click', () => {
-  const cheapest = state.market[0];
-  if (!cheapest) {
-    addLog('Le mercato est vide pour le moment.');
-    return;
+  .club-header,
+  .panel-head {
+    flex-direction: column;
+    align-items: flex-start;
   }
-
-  addLog(`Le club cible ${cheapest.name} dans le mercato africain.`);
-  render();
-});
-document.querySelector('#next-day-btn').addEventListener('click', nextDay);
-
-render();
+}
