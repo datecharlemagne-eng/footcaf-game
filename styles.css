@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Foot CAF</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand-mark">⚽</div>
+          <div>
+            <h1>Foot CAF</h1>
+            <small>Football Africain</small>
+          </div>
+        </div>
+
+        <nav>
+          <button class="nav-btn active" data-section="dashboard">Tableau de bord</button>
+          <button class="nav-btn" data-section="players">Joueurs</button>
+          <button class="nav-btn" data-section="recruitment">Recrutement</button>
+          <button class="nav-btn" data-section="leagues">Championnats</button>
+          <button class="nav-btn" data-section="caf">CAF</button>
+          <button class="nav-btn" data-section="finance">Finances</button>
+          <button class="nav-btn" data-section="leaderboard">Classement</button>
+        </nav>
+
+        <div class="mini-panel">
+          <h3>Match du week-end</h3>
+          <p>Raja CA vs Wydad AC</p>
+          <button id="simulateWeekBtn" class="primary-btn">Simuler la semaine</button>
+        </div>
+      </aside>
+
+      <main class="main-panel">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Mode club</p>
+            <h2 id="clubName">Raja CA</h2>
+          </div>
+          <div class="top-meta">
+            <span class="chip">Saison 2026/27</span>
+            <span class="chip accent">CAF</span>
+          </div>
+        </header>
+
+        <section id="dashboard" class="screen active">
+          <div class="stats-grid">
+            <article class="stat-card">
+              <label>Budget</label>
+              <strong id="budgetValue">€18.5M</strong>
+              <small>Finances du club</small>
+            </article>
+            <article class="stat-card">
+              <label>Réputation</label>
+              <strong id="reputationValue">78</strong>
+              <small>Classement régional</small>
+            </article>
+            <article class="stat-card">
+              <label>Valeur effectif</label>
+              <strong id="teamValue">€64.2M</strong>
+              <small>Marché de transfert</small>
+            </article>
+            <article class="stat-card">
+              <label>Forme</label>
+              <strong id="formValue">7.8</strong>
+              <small>Derniers 5 matches</small>
+            </article>
+          </div>
+
+          <div class="content-grid">
+            <div class="panel-block">
+              <div class="section-head">
+                <h3>Agenda</h3>
+                <button class="ghost-btn" id="advanceWeekBtn">+ 1 semaine</button>
+              </div>
+              <ul id="agendaList" class="agenda-list"></ul>
+            </div>
+
+            <div class="panel-block">
+              <div class="section-head">
+                <h3>Notifications</h3>
+              </div>
+              <ul id="notificationsList" class="notification-list"></ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="players" class="screen">
+          <div class="section-head">
+            <h3>Effectif</h3>
+            <button class="ghost-btn" id="trainPlayersBtn">Former les joueurs</button>
+          </div>
+          <div id="playersList" class="card-list"></div>
+        </section>
+
+        <section id="recruitment" class="screen">
+          <div class="section-head">
+            <h3>Recrutement</h3>
+            <button class="ghost-btn" id="refreshScoutsBtn">Relancer les scouts</button>
+          </div>
+          <div id="recruitmentList" class="card-list"></div>
+        </section>
+
+        <section id="leagues" class="screen">
+          <div class="section-head">
+            <h3>Championnat national</h3>
+          </div>
+          <div id="leagueTable" class="table-wrapper"></div>
+        </section>
+
+        <section id="caf" class="screen">
+          <div class="section-head">
+            <h3>Compétitions CAF</h3>
+          </div>
+          <div id="cafCompetitions" class="competition-grid"></div>
+        </section>
+
+        <section id="finance" class="screen">
+          <div class="section-head">
+            <h3>Gestion financière</h3>
+          </div>
+          <div id="financePanel" class="finance-grid"></div>
+        </section>
+
+        <section id="leaderboard" class="screen">
+          <div class="section-head">
+            <h3>Classement mondial</h3>
+          </div>
+          <div id="leaderboardTable" class="table-wrapper"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
