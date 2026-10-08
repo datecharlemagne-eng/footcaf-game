@@ -1,4 +1,6 @@
-const state = {
+const STORAGE_KEY = 'footcaf-save-v1';
+
+const defaultState = {
   clubName: 'Raja CA',
   budget: 18500000,
   reputation: 78,
@@ -28,7 +30,7 @@ const state = {
     { club: 'FUS Rabat', points: 22, gp: 10, ga: 11 },
     { club: 'MAS Fès', points: 20, gp: 9, ga: 11 }
   ],
-  leaderBoard: [
+  leaderboard: [
     { rank: 1, club: 'Al Ahly SC', country: 'Égypte', points: 1905 },
     { rank: 2, club: 'Wydad AC', country: 'Maroc', points: 1856 },
     { rank: 3, club: 'Mamelodi Sundowns', country: 'Afrique du Sud', points: 1798 },
@@ -56,32 +58,78 @@ const state = {
   finances: {
     revenues: { sponsors: 4300000, tv: 2800000, tickets: 2100000, transfers: 1500000 },
     expenses: { salaries: 6400000, training: 980000, transfers: 1300000, facilities: 820000 }
-  }
+  },
+  playerCareer: {
+    name: 'Youssef El Amrani',
+    age: 17,
+    country: 'Maroc',
+    role: 'Ailier / Attaquant',
+    academy: 'Académie Mohammed VI',
+    progress: 62,
+    overall: 75,
+    potential: 88
+  },
+  database: [
+    { country: 'Maroc', league: 'Botola Pro', clubs: ['Raja CA', 'Wydad AC', 'AS FAR', 'RS Berkane', 'FUS Rabat'] },
+    { country: 'Égypte', league: 'Egyptian Premier League', clubs: ['Al Ahly SC', 'Zamalek SC', 'Pyramids FC', 'Modern Sport FC', 'El Gouna'] },
+    { country: 'Algérie', league: 'Ligue 1 Mobilis', clubs: ['MC Alger', 'CR Belouizdad', 'JS Kabylie', 'USM Alger', 'ES Sétif'] },
+    { country: 'Afrique du Sud', league: 'Betway Premiership', clubs: ['Mamelodi Sundowns', 'Orlando Pirates', 'Kaizer Chiefs', 'Stellenbosch FC', 'Cape Town City'] },
+    { country: 'Nigéria', league: 'NPFL', clubs: ['Enyimba FC', 'Remo Stars', 'Rivers United', 'Enugu Rangers', 'Lobi Stars'] },
+    { country: 'Sénégal', league: 'Ligue 1', clubs: ['Teungueth FC', 'ASC Jaraaf', 'Casa Sports', 'Génération Foot', 'US Gorée'] },
+    { country: 'Côte d’Ivoire', league: 'Ligue 1', clubs: ['ASEC Mimosas', 'Stade d’Abidjan', 'FC San Pédro', 'SOA', 'Lys Sassandra'] },
+    { country: 'Cameroun', league: 'MTN Elite One', clubs: ['Coton Sport', 'Canon Yaoundé', 'Dynamo de Douala', 'PWD Bamenda', 'UMS de Loum'] }
+  ],
+  liveScore: '2 - 1',
+  matchLog: [
+    'Youssef En-Nesyri ouvre le score à la 17e minute.',
+    'Le Wydad égalise par faute de main dans la surface.',
+    'Azzedine Ounahi remet Raja devant à la 64e minute.'
+  ]
 };
+
+function loadState() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return JSON.parse(JSON.stringify(defaultState));
+  try {
+    return { ...JSON.parse(JSON.stringify(defaultState)), ...JSON.parse(raw) };
+  } catch {
+    return JSON.parse(JSON.stringify(defaultState));
+  }
+}
+
+let state = loadState();
 
 const formatCurrency = (value) => {
-  return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'EUR',
+    maximumFractionDigits: 0
+  }).format(value);
 };
 
-const renderStats = () => {
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function renderStats() {
   document.getElementById('budgetValue').textContent = formatCurrency(state.budget);
   document.getElementById('reputationValue').textContent = state.reputation;
   document.getElementById('teamValue').textContent = formatCurrency(state.teamValue);
   document.getElementById('formValue').textContent = state.form.toFixed(1);
   document.getElementById('clubName').textContent = state.clubName;
-};
+}
 
-const renderAgenda = () => {
+function renderAgenda() {
   const agendaList = document.getElementById('agendaList');
   agendaList.innerHTML = state.agenda.map(item => `<li>${item}</li>`).join('');
-};
+}
 
-const renderNotifications = () => {
+function renderNotifications() {
   const notificationsList = document.getElementById('notificationsList');
   notificationsList.innerHTML = state.notifications.map(item => `<li>${item}</li>`).join('');
-};
+}
 
-const renderPlayers = () => {
+function renderPlayers() {
   const playersList = document.getElementById('playersList');
   playersList.innerHTML = state.players.map(player => `
     <div class="player-card">
@@ -104,70 +152,69 @@ const renderPlayers = () => {
       <span class="badge ${player.status.includes('Buteur') || player.status.includes('Tête') ? 'gold' : 'green'}">${player.status}</span>
     </div>
   `).join('');
-};
+}
 
-const renderRecruitment = () => {
-  const recruitmentList = document.getElementById('recruitmentList');
-  recruitmentList.innerHTML = state.recruitment.map(player => `
-    <div class="recruit-card">
-      <div class="section-head">
-        <div>
-          <strong>${player.name}</strong>
-          <div class="meta">${player.position} • ${player.age} ans • ${player.country}</div>
-        </div>
-        <span class="badge blue">${player.trend}</span>
-      </div>
-      <div class="metric-row"><span>Potentiel</span><strong>${player.potential}</strong></div>
-      <div class="metric-row"><span>Frais</span><strong>${formatCurrency(player.fee)}</strong></div>
-      <button class="action-btn">Signer</button>
-    </div>
-  `).join('');
-};
+function renderRecruitment() {
+  document.getElementById('recruitmentList')?.remove();
+}
 
-const renderLeague = () => {
-  const leagueTable = document.getElementById('leagueTable');
-  const rows = state.leagueTable.map((team, index) => `
+function renderCareer() {
+  const summary = document.getElementById('careerSummary');
+  summary.innerHTML = `
+    <div class="meta">Profil du joueur</div>
+    <div class="player-name">${state.playerCareer.name}</div>
+    <div class="meta">${state.playerCareer.age} ans • ${state.playerCareer.country}</div>
+    <div class="meta">Rôle: ${state.playerCareer.role}</div>
+    <div class="meta">Académie: ${state.playerCareer.academy}</div>
+    <div class="metric-row"><span>Overall</span><strong>${state.playerCareer.overall}</strong></div>
+    <div class="metric-row"><span>Potentiel</span><strong>${state.playerCareer.potential}</strong></div>
+    <div class="metric-row"><span>Progression</span><strong>${state.playerCareer.progress}%</strong></div>
+  `;
+}
+
+function renderLeaderboard() {
+  const leaderboardTable = document.getElementById('leaderboardTable');
+  const rows = [...state.leaderboard].map(item => `
     <tr>
-      <td>${index + 1}</td>
-      <td>${team.club}</td>
-      <td>${team.points}</td>
-      <td>${team.gp}</td>
-      <td>${team.ga}</td>
+      <td>${item.rank}</td>
+      <td>${item.club}</td>
+      <td>${item.country}</td>
+      <td>${item.points}</td>
     </tr>
   `).join('');
 
-  leagueTable.innerHTML = `
+  leaderboardTable.innerHTML = `
     <table>
       <thead>
         <tr>
           <th>#</th>
           <th>Club</th>
-          <th>Pts</th>
-          <th>Buts +</th>
-          <th>Buts -</th>
+          <th>Pays</th>
+          <th>Points</th>
         </tr>
       </thead>
       <tbody>${rows}</tbody>
     </table>
   `;
-};
+}
 
-const renderCompetitions = () => {
-  const cafCompetitions = document.getElementById('cafCompetitions');
-  cafCompetitions.innerHTML = state.competitions.map(comp => `
-    <div class="competition-card">
-      <h4>${comp.name}</h4>
-      <div class="meta">${comp.stage}</div>
-      <div class="metric-row"><span>Participants</span><strong>${comp.teams}</strong></div>
-      <span class="badge ${comp.status === 'Qualifié' ? 'green' : comp.status === 'Actif' ? 'blue' : 'gold'}">${comp.status}</span>
+function renderDatabase() {
+  const databaseList = document.getElementById('databaseList');
+  databaseList.innerHTML = state.database.map(country => `
+    <div class="database-card">
+      <h4>${country.country}</h4>
+      <div class="meta">${country.league}</div>
+      <ul>
+        ${country.clubs.map(club => `<li>${club}</li>`).join('')}
+      </ul>
     </div>
   `).join('');
-};
+}
 
-const renderFinance = () => {
+function renderFinance() {
   const financePanel = document.getElementById('financePanel');
-  const totalRevenues = Object.values(state.finances.revenues).reduce((sum, value) => sum + value, 0);
-  const totalExpenses = Object.values(state.finances.expenses).reduce((sum, value) => sum + value, 0);
+  const totalRevenues = Object.values(state.finances.revenues).reduce((a, b) => a + b, 0);
+  const totalExpenses = Object.values(state.finances.expenses).reduce((a, b) => a + b, 0);
 
   financePanel.innerHTML = `
     <div class="finance-card">
@@ -194,35 +241,26 @@ const renderFinance = () => {
       </div>
     </div>
   `;
-};
+}
 
-const renderLeaderboard = () => {
-  const leaderboardTable = document.getElementById('leaderboardTable');
-  leaderboardTable.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Club</th>
-          <th>Pays</th>
-          <th>Points</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${state.leaderBoard.map(item => `
-          <tr>
-            <td>${item.rank}</td>
-            <td>${item.club}</td>
-            <td>${item.country}</td>
-            <td>${item.points}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  `;
-};
+function renderMatch() {
+  document.getElementById('liveScore').textContent = state.liveScore;
+  document.getElementById('matchLog').innerHTML = state.matchLog.map(entry => `<div>• ${entry}</div>`).join('');
+}
 
-const simulateWeek = () => {
+function renderAll() {
+  renderStats();
+  renderAgenda();
+  renderNotifications();
+  renderPlayers();
+  renderCareer();
+  renderLeaderboard();
+  renderDatabase();
+  renderFinance();
+  renderMatch();
+}
+
+function simulateWeek() {
   state.week += 1;
   state.form = +(Math.random() * 1.8 + 7.1).toFixed(1);
   state.budget += Math.random() * 800000 + 250000;
@@ -231,14 +269,15 @@ const simulateWeek = () => {
   state.notifications = state.notifications.slice(0, 6);
   state.agenda.push('Un club européen a demandé un entretien pour l’un de vos jeunes talents.');
   state.agenda = state.agenda.slice(-4);
+  saveState();
   renderAll();
-};
+}
 
-const advanceWeek = () => {
+function advanceWeek() {
   simulateWeek();
-};
+}
 
-const trainPlayers = () => {
+function trainPlayers() {
   state.players = state.players.map(player => ({
     ...player,
     ovr: Math.min(96, player.ovr + 1),
@@ -246,47 +285,553 @@ const trainPlayers = () => {
   }));
   state.notifications.unshift('Le centre de formation a accéléré le développement des jeunes joueurs.');
   state.notifications = state.notifications.slice(0, 6);
+  saveState();
   renderAll();
-};
+}
 
-const refreshScouts = () => {
-  state.recruitment = state.recruitment.map(player => ({
-    ...player,
-    fee: Math.round(player.fee * (0.9 + Math.random() * 0.35))
-  }));
-  state.notifications.unshift('Les scouts ont repéré 3 nouveaux profils prometteurs en Afrique de l’Ouest.');
+function playMatch() {
+  const homeGoals = Math.floor(Math.random() * 3 + 1);
+  const awayGoals = Math.floor(Math.random() * 2 + 0);
+  state.liveScore = `${homeGoals} - ${awayGoals}`;
+  state.matchLog = [
+    `${homeGoals > awayGoals ? 'Raja CA' : 'Wydad AC'} domine l’échange technique et marque le point décisif.`,
+    `Le public a vibré dans les derniers instants du match.`,
+    `Le club renforcera son effectif avec la fin de semaine.}`
+  ];
+  if (homeGoals >= awayGoals) {
+    state.notifications.unshift('Victoire solide à domicile, le club gagne du prestige et des points.');
+  } else {
+    state.notifications.unshift('Match disputé mais le club repart avec un point précieux.');
+  }
   state.notifications = state.notifications.slice(0, 6);
+  saveState();
   renderAll();
-};
+}
 
-const renderAll = () => {
-  renderStats();
-  renderAgenda();
-  renderNotifications();
-  renderPlayers();
-  renderRecruitment();
-  renderLeague();
-  renderCompetitions();
-  renderFinance();
-  renderLeaderboard();
-};
+function refreshLeaderboard() {
+  state.leaderboard = state.leaderboard.map((entry, index) => ({
+    ...entry,
+    points: entry.points + (index === 0 ? 10 : 6),
+    rank: index + 1
+  })).sort((a, b) => b.points - a.points).map((entry, index) => ({ ...entry, rank: index + 1 }));
+  state.notifications.unshift('Le classement mondial a été mis à jour en temps réel.');
+  state.notifications = state.notifications.slice(0, 6);
+  saveState();
+  renderAll();
+}
 
 const navButtons = document.querySelectorAll('.nav-btn');
 navButtons.forEach(button => {
   button.addEventListener('click', () => {
     navButtons.forEach(btn => btn.classList.remove('active'));
     button.classList.add('active');
-    const section = button.dataset.section;
+    const tab = button.dataset.tab;
     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
-    document.getElementById(section).classList.add('active');
+    document.getElementById(tab).classList.add('active');
   });
 });
 
 document.getElementById('simulateWeekBtn').addEventListener('click', simulateWeek);
 document.getElementById('advanceWeekBtn').addEventListener('click', advanceWeek);
 document.getElementById('trainPlayersBtn').addEventListener('click', trainPlayers);
-document.getElementById('refreshScoutsBtn').addEventListener('click', refreshScouts);
+document.getElementById('playMatchBtn').addEventListener('click', playMatch);
+document.getElementById('refreshLeaderboardBtn').addEventListener('click', refreshLeaderboard);
+document.getElementById('saveGameBtn').addEventListener('click', () => {
+  saveState();
+  state.notifications.unshift('Progression sauvegardée localement avec succès.');
+  state.notifications = state.notifications.slice(0, 6);
+  renderAll();
+});
 
 renderAll();
 
-console.log('Foot CAF prototype loaded successfully.');
+console.log('Foot CAF loaded.');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -13,24 +13,25 @@
           <div class="brand-mark">⚽</div>
           <div>
             <h1>Foot CAF</h1>
-            <small>Football Africain</small>
+            <small>Football africain</small>
           </div>
         </div>
 
         <nav>
-          <button class="nav-btn active" data-section="dashboard">Tableau de bord</button>
-          <button class="nav-btn" data-section="players">Joueurs</button>
-          <button class="nav-btn" data-section="recruitment">Recrutement</button>
-          <button class="nav-btn" data-section="leagues">Championnats</button>
-          <button class="nav-btn" data-section="caf">CAF</button>
-          <button class="nav-btn" data-section="finance">Finances</button>
-          <button class="nav-btn" data-section="leaderboard">Classement</button>
+          <button class="nav-btn active" data-tab="dashboard">Tableau de bord</button>
+          <button class="nav-btn" data-tab="squad">Effectif</button>
+          <button class="nav-btn" data-tab="career">Carrière</button>
+          <button class="nav-btn" data-tab="match">Match 3D</button>
+          <button class="nav-btn" data-tab="database">Base CAF</button>
+          <button class="nav-btn" data-tab="online">Multijoueur</button>
+          <button class="nav-btn" data-tab="finance">Finances</button>
         </nav>
 
         <div class="mini-panel">
-          <h3>Match du week-end</h3>
+          <h3>Prochaine rencontre</h3>
           <p>Raja CA vs Wydad AC</p>
           <button id="simulateWeekBtn" class="primary-btn">Simuler la semaine</button>
+          <button id="saveGameBtn" class="secondary-btn">Sauvegarder</button>
         </div>
       </aside>
 
@@ -56,17 +57,17 @@
             <article class="stat-card">
               <label>Réputation</label>
               <strong id="reputationValue">78</strong>
-              <small>Classement régional</small>
+              <small>Classement CAF</small>
             </article>
             <article class="stat-card">
               <label>Valeur effectif</label>
               <strong id="teamValue">€64.2M</strong>
-              <small>Marché de transfert</small>
+              <small>Marché</small>
             </article>
             <article class="stat-card">
               <label>Forme</label>
               <strong id="formValue">7.8</strong>
-              <small>Derniers 5 matches</small>
+              <small>Derniers 5</small>
             </article>
           </div>
 
@@ -88,7 +89,7 @@
           </div>
         </section>
 
-        <section id="players" class="screen">
+        <section id="squad" class="screen">
           <div class="section-head">
             <h3>Effectif</h3>
             <button class="ghost-btn" id="trainPlayersBtn">Former les joueurs</button>
@@ -96,40 +97,85 @@
           <div id="playersList" class="card-list"></div>
         </section>
 
-        <section id="recruitment" class="screen">
+        <section id="career" class="screen">
           <div class="section-head">
-            <h3>Recrutement</h3>
-            <button class="ghost-btn" id="refreshScoutsBtn">Relancer les scouts</button>
+            <h3>Carrière joueur</h3>
           </div>
-          <div id="recruitmentList" class="card-list"></div>
+          <div class="career-layout">
+            <div class="career-card player-summary" id="careerSummary"></div>
+            <div class="career-card">
+              <h4>Progression</h4>
+              <div class="progress-block">
+                <div class="progress-label"><span>Rue</span><span>Club de quartier</span></div>
+                <div class="progress-bar"><span style="width: 35%"></span></div>
+              </div>
+              <div class="progress-block">
+                <div class="progress-label"><span>Centre formation</span><span>Professionnel</span></div>
+                <div class="progress-bar"><span style="width: 72%"></span></div>
+              </div>
+              <div class="progress-block">
+                <div class="progress-label"><span>Club pro</span><span>CAF</span></div>
+                <div class="progress-bar"><span style="width: 58%"></span></div>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section id="leagues" class="screen">
+        <section id="match" class="screen">
           <div class="section-head">
-            <h3>Championnat national</h3>
+            <h3>Match 3D</h3>
+            <button class="ghost-btn" id="playMatchBtn">Jouer le match</button>
           </div>
-          <div id="leagueTable" class="table-wrapper"></div>
+
+          <div class="match-stage">
+            <div class="pitch">
+              <div class="pitch-line center-circle"></div>
+              <div class="pitch-line center-line"></div>
+              <div class="pitch-line box left-box"></div>
+              <div class="pitch-line box right-box"></div>
+              <div class="player p1"></div>
+              <div class="player p2"></div>
+              <div class="player p3"></div>
+              <div class="player p4"></div>
+              <div class="player p5"></div>
+              <div class="player enemy e1"></div>
+              <div class="player enemy e2"></div>
+              <div class="player enemy e3"></div>
+              <div class="player enemy e4"></div>
+              <div class="player enemy e5"></div>
+              <div class="ball"></div>
+            </div>
+            <div class="match-panel">
+              <div class="scoreboard">
+                <span>Raja CA</span>
+                <strong id="liveScore">2 - 1</strong>
+                <span>Wydad AC</span>
+              </div>
+              <div id="matchLog" class="match-log"></div>
+            </div>
+          </div>
         </section>
 
-        <section id="caf" class="screen">
+        <section id="database" class="screen">
           <div class="section-head">
-            <h3>Compétitions CAF</h3>
+            <h3>Base de données CAF</h3>
           </div>
-          <div id="cafCompetitions" class="competition-grid"></div>
+          <div id="databaseList" class="database-grid"></div>
+        </section>
+
+        <section id="online" class="screen">
+          <div class="section-head">
+            <h3>Classement mondial</h3>
+            <button class="ghost-btn" id="refreshLeaderboardBtn">Actualiser</button>
+          </div>
+          <div id="leaderboardTable" class="table-wrapper"></div>
         </section>
 
         <section id="finance" class="screen">
           <div class="section-head">
-            <h3>Gestion financière</h3>
+            <h3>Finances</h3>
           </div>
           <div id="financePanel" class="finance-grid"></div>
-        </section>
-
-        <section id="leaderboard" class="screen">
-          <div class="section-head">
-            <h3>Classement mondial</h3>
-          </div>
-          <div id="leaderboardTable" class="table-wrapper"></div>
         </section>
       </main>
     </div>
@@ -137,3 +183,164 @@
     <script src="app.js"></script>
   </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
