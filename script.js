@@ -54,6 +54,16 @@ button.ghost {
   box-shadow: none;
 }
 
+select {
+  width: 100%;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 0.6rem 0.7rem;
+  margin-top: 0.35rem;
+}
+
 .app-shell {
   max-width: 1200px;
   margin: 0 auto;
@@ -217,6 +227,19 @@ h1 {
   font-weight: 800;
 }
 
+.mg-controls {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 0.7rem;
+  margin-bottom: 1rem;
+}
+
+.mg-controls label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.83rem;
+}
+
 .fixture-box,
 .caf-box {
   display: grid;
@@ -296,7 +319,8 @@ h1 {
 
 @media (max-width: 840px) {
   .stats-grid,
-  .main-grid {
+  .main-grid,
+  .mg-controls {
     grid-template-columns: 1fr;
   }
 

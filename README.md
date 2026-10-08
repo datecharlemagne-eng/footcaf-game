@@ -8,6 +8,8 @@ const defaultState = {
   reputation: 76,
   morale: 72,
   objective: 'Championnat CAF',
+  difficulty: 'Moyen',
+  trainingFocus: 'Attaque',
   players: [
     { name: 'Sadio Diop', position: 'Gardien', rating: 82 },
     { name: 'Moussa Faye', position: 'Défenseur', rating: 80 },
@@ -56,6 +58,7 @@ const dom = {
   clubName: document.querySelector('#club-name'),
   season: document.querySelector('#season'),
   day: document.querySelector('#day'),
+  difficultyLabel: document.querySelector('#difficulty-label'),
   budget: document.querySelector('#budget'),
   reputation: document.querySelector('#reputation'),
   morale: document.querySelector('#morale'),
@@ -70,7 +73,9 @@ const dom = {
   matchBtn: document.querySelector('#match-btn'),
   recruitBtn: document.querySelector('#recruit-btn'),
   nextDayBtn: document.querySelector('#next-day-btn'),
-  resetBtn: document.querySelector('#reset-btn')
+  resetBtn: document.querySelector('#reset-btn'),
+  trainingFocus: document.querySelector('#training-focus'),
+  difficultySelect: document.querySelector('#difficulty-select')
 };
 
 let state = loadState();
@@ -116,6 +121,24 @@ function averageTeamRating() {
   if (!state.players.length) return 0;
   const total = state.players.reduce((sum, player) => sum + player.rating, 0);
   return total / state.players.length;
+}
+
+function getDifficultyModifier() {
+  return {
+    Facile: 0.85,
+    Moyen: 1,
+    Difficile: 1.15
+  }[state.difficulty] || 1;
+}
+
+function getFocusBonus() {
+  const focus = state.trainingFocus || 'Attaque';
+  const bonuses = {
+    Attaque: { attack: 1.75, defense: 0.2 },
+    Défense: { attack: 0.3, defense: 1.8 },
+    Contrôle: { attack: 0.9, defense: 0.9 }
+  };
+  return bonuses[focus] || bonuses.Attaque;
 }
 
 function renderTeam() {
@@ -255,10 +278,13 @@ function renderHeader() {
   dom.clubName.textContent = state.club;
   dom.season.textContent = state.season;
   dom.day.textContent = state.day;
+  dom.difficultyLabel.textContent = state.difficulty;
   dom.budget.textContent = formatMoney(state.budget);
   dom.reputation.textContent = state.reputation;
   dom.morale.textContent = `${state.morale}%`;
   dom.objective.textContent = state.objective;
+  dom.trainingFocus.value = state.trainingFocus;
+  dom.difficultySelect.value = state.difficulty;
 }
 
 function applyLeagueResult(result) {
@@ -331,13 +357,15 @@ function simulateMatch() {
     return;
   }
 
-  const ourRating = averageTeamRating() + state.morale / 15;
-  const opponentRating = 72 + Math.random() * 14;
+  const focusBonus = getFocusBonus();
+  const diffFactor = getDifficultyModifier();
+  const ourRating = averageTeamRating() + state.morale / 15 + focusBonus.attack * 1.2;
+  const opponentRating = (72 + Math.random() * 14) * diffFactor;
   const homeBoost = fixture.home ? 1.2 : 0.8;
   const scoreDiff = (ourRating * homeBoost - opponentRating) / 18;
 
-  let ourGoals = Math.max(0, Math.round(1 + scoreDiff + Math.random() * 2.2));
-  let opponentGoals = Math.max(0, Math.round(1 + (opponentRating - ourRating) / 18 + Math.random() * 1.8));
+  let ourGoals = Math.max(0, Math.round(1 + scoreDiff + Math.random() * 2.2 + focusBonus.attack * 0.25));
+  let opponentGoals = Math.max(0, Math.round(1 + (opponentRating - ourRating) / 18 + Math.random() * 1.8 + focusBonus.defense * 0.1));
 
   if (ourGoals > 4 && Math.random() > 0.7) ourGoals = 4;
   if (opponentGoals > 4 && Math.random() > 0.7) opponentGoals = 4;
@@ -365,13 +393,25 @@ function simulateMatch() {
 }
 
 function trainTeam() {
-  state.players = state.players.map((player) => ({
-    ...player,
-    rating: clamp(player.rating + (Math.random() > 0.5 ? 1 : 0), 70, 97)
-  }));
+  const focus = getFocusBonus();
+  state.players = state.players.map((player) => {
+    let bonus = 0;
+    if (player.position.toLowerCase().includes('attaque') || player.position.toLowerCase().includes('attaquant') || player.position.toLowerCase().includes('ailier')) {
+      bonus = focus.attack;
+    } else if (player.position.toLowerCase().includes('déf')) {
+      bonus = focus.defense;
+    } else {
+      bonus = focus.attack * 0.7 + focus.defense * 0.7;
+    }
+
+    return {
+      ...player,
+      rating: clamp(player.rating + (Math.random() > 0.45 ? Math.round(bonus) : 0), 70, 97)
+    };
+  });
   state.morale = clamp(state.morale + 8, 0, 100);
   state.reputation += 1;
-  addLog('L’entraînement collectif a renforcé la confiance et la qualité du groupe.');
+  addLog(`L’entraînement axé sur ${state.trainingFocus} a renforcé le groupe.`);
   render();
   saveState();
 }
@@ -433,6 +473,16 @@ dom.matchBtn.addEventListener('click', simulateMatch);
 dom.recruitBtn.addEventListener('click', recruitBestPlayer);
 dom.nextDayBtn.addEventListener('click', nextDay);
 dom.resetBtn.addEventListener('click', resetGame);
+dom.trainingFocus.addEventListener('change', (event) => {
+  state.trainingFocus = event.target.value;
+  saveState();
+  render();
+});
+dom.difficultySelect.addEventListener('change', (event) => {
+  state.difficulty = event.target.value;
+  saveState();
+  render();
+});
 
 render();
 saveState();

@@ -17,6 +17,7 @@
           <div class="club-badges">
             <span class="chip">Saison <strong id="season">2026</strong></span>
             <span class="chip">Jour <strong id="day">1</strong></span>
+            <span class="chip">Niveau <strong id="difficulty-label">Moyen</strong></span>
             <button id="reset-btn" class="ghost">Réinitialiser</button>
           </div>
         </div>
@@ -46,6 +47,24 @@
           <div class="panel-head">
             <h2>Équipe</h2>
             <button id="train-btn">Entraînement</button>
+          </div>
+          <div class="mg-controls">
+            <label>
+              Focus d’entraînement
+              <select id="training-focus">
+                <option value="Attaque">Attaque</option>
+                <option value="Défense">Défense</option>
+                <option value="Contrôle">Contrôle</option>
+              </select>
+            </label>
+            <label>
+              Difficulté
+              <select id="difficulty-select">
+                <option value="Facile">Facile</option>
+                <option value="Moyen" selected>Moyen</option>
+                <option value="Difficile">Difficile</option>
+              </select>
+            </label>
           </div>
           <div id="team-list" class="team-list"></div>
         </section>
