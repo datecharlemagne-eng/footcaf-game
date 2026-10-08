@@ -1,6 +1,23 @@
 const STORAGE_KEY = 'footcaf-save-v1';
 
-const defaultState = {
+const basePlayers = [
+  { name: 'Sadio Diop', position: 'Gardien', rating: 82 },
+  { name: 'Moussa Faye', position: 'Défenseur', rating: 80 },
+  { name: 'Mamadou Cissé', position: 'Défenseur', rating: 78 },
+  { name: 'Ibrahima Ndao', position: 'Milieu', rating: 81 },
+  { name: 'Khalid Samb', position: 'Milieu', rating: 79 },
+  { name: 'Yacine Fall', position: 'Attaquant', rating: 84 },
+  { name: 'Ablaye Diagna', position: 'Attaquant', rating: 82 }
+];
+
+const baseMarket = [
+  { name: 'Lamine Kébé', position: 'Milieu', price: 1_500_000, rating: 85 },
+  { name: 'Moussa Sarr', position: 'Ailier', price: 2_200_000, rating: 86 },
+  { name: 'Ndiaga Mbaye', position: 'Avant-centre', price: 2_600_000, rating: 88 },
+  { name: 'Baba Mbengue', position: 'Défenseur', price: 1_200_000, rating: 80 }
+];
+
+const createDefaultState = () => ({
   club: 'AS Dakar',
   season: 2026,
   day: 1,
@@ -10,21 +27,8 @@ const defaultState = {
   objective: 'Championnat CAF',
   difficulty: 'Moyen',
   trainingFocus: 'Attaque',
-  players: [
-    { name: 'Sadio Diop', position: 'Gardien', rating: 82 },
-    { name: 'Moussa Faye', position: 'Défenseur', rating: 80 },
-    { name: 'Mamadou Cissé', position: 'Défenseur', rating: 78 },
-    { name: 'Ibrahima Ndao', position: 'Milieu', rating: 81 },
-    { name: 'Khalid Samb', position: 'Milieu', rating: 79 },
-    { name: 'Yacine Fall', position: 'Attaquant', rating: 84 },
-    { name: 'Ablaye Diagna', position: 'Attaquant', rating: 82 }
-  ],
-  market: [
-    { name: 'Lamine Kébé', position: 'Milieu', price: 1_500_000, rating: 85 },
-    { name: 'Moussa Sarr', position: 'Ailier', price: 2_200_000, rating: 86 },
-    { name: 'Ndiaga Mbaye', position: 'Avant-centre', price: 2_600_000, rating: 88 },
-    { name: 'Baba Mbengue', position: 'Défenseur', price: 1_200_000, rating: 80 }
-  ],
+  players: structuredClone(basePlayers),
+  market: structuredClone(baseMarket),
   fixtures: [
     { round: 1, opponent: 'FC Thiès', home: true },
     { round: 2, opponent: 'US Saint-Louis', home: false },
@@ -51,10 +55,16 @@ const defaultState = {
     'La préparation de la semaine a commencé dans de bonnes conditions.',
     'Le staff a constaté une hausse de la cohésion de groupe avant le prochain match.',
     'Le club se prépare sérieusement pour le titre national et la Coupe CAF.'
-  ]
-};
+  ],
+  eventText: 'Pas d’événement majeur.'
+});
 
 const dom = {
+  startOverlay: document.querySelector('#start-overlay'),
+  gameShell: document.querySelector('#game-shell'),
+  newGameBtn: document.querySelector('#new-game-btn'),
+  continueBtn: document.querySelector('#continue-btn'),
+  startDifficulty: document.querySelector('#start-difficulty'),
   clubName: document.querySelector('#club-name'),
   season: document.querySelector('#season'),
   day: document.querySelector('#day'),
@@ -82,13 +92,12 @@ let state = loadState();
 
 function loadState() {
   const saved = localStorage.getItem(STORAGE_KEY);
-  if (!saved) return structuredClone(defaultState);
-
+  if (!saved) return createDefaultState();
   try {
     const parsed = JSON.parse(saved);
-    return { ...structuredClone(defaultState), ...parsed };
+    return { ...createDefaultState(), ...parsed };
   } catch {
-    return structuredClone(defaultState);
+    return createDefaultState();
   }
 }
 
@@ -143,33 +152,29 @@ function getFocusBonus() {
 
 function renderTeam() {
   dom.teamList.innerHTML = state.players
-    .map(
-      (player) => `
-        <div class="player-card">
-          <div class="player-meta">
-            <strong>${player.name}</strong>
-            <span>${player.position}</span>
-          </div>
-          <span class="rating-badge">${player.rating}</span>
+    .map((player) => `
+      <div class="player-card">
+        <div class="player-meta">
+          <strong>${player.name}</strong>
+          <span>${player.position}</span>
         </div>
-      `
-    )
+        <span class="rating-badge">${player.rating}</span>
+      </div>
+    `)
     .join('');
 }
 
 function renderMarket() {
   dom.marketList.innerHTML = state.market
-    .map(
-      (player) => `
-        <div class="market-card">
-          <div class="market-meta">
-            <strong>${player.name}</strong>
-            <span>${player.position} • ${player.rating} ★</span>
-          </div>
-          <button data-player="${player.name}" data-price="${player.price}">Signer ${formatMoney(player.price)}</button>
+    .map((player) => `
+      <div class="market-card">
+        <div class="market-meta">
+          <strong>${player.name}</strong>
+          <span>${player.position} • ${player.rating} ★</span>
         </div>
-      `
-    )
+        <button data-player="${player.name}" data-price="${player.price}">Signer ${formatMoney(player.price)}</button>
+      </div>
+    `)
     .join('');
 
   dom.marketList.querySelectorAll('button').forEach((button) => {
@@ -177,8 +182,8 @@ function renderMarket() {
       const name = button.dataset.player;
       const price = Number(button.dataset.price);
       const target = state.market.find((player) => player.name === name);
-
       if (!target) return;
+
       if (state.budget < price) {
         addLog(`Le recrutement de ${name} est refusé : budget insuffisant.`);
         render();
@@ -186,11 +191,7 @@ function renderMarket() {
       }
 
       state.budget -= price;
-      state.players.push({
-        name: target.name,
-        position: target.position,
-        rating: target.rating
-      });
+      state.players.push({ ...target });
       state.market = state.market.filter((player) => player.name !== name);
       state.reputation += 2;
       addLog(`${name} a signé pour ${formatMoney(price)}. Le groupe est renforcé.`);
@@ -204,24 +205,20 @@ function renderFixture() {
   const fixture = getCurrentFixture();
   if (!fixture) {
     dom.fixtureBox.innerHTML = `
-      <div class="fixture-meta">
-        <span>Calendrier</span>
-        <span>Terminé</span>
-      </div>
+      <div class="fixture-meta"><span>Calendrier</span><span>Terminé</span></div>
       <div class="fixture-score">Saison clôturée</div>
     `;
     return;
   }
 
-  const venue = fixture.home ? 'Domicile' : 'Extérieur';
   dom.fixtureBox.innerHTML = `
     <div class="fixture-meta">
       <span>Journée ${fixture.round}</span>
-      <span>${venue}</span>
+      <span>${fixture.home ? 'Domicile' : 'Extérieur'}</span>
     </div>
     <div class="fixture-score">AS Dakar vs ${fixture.opponent}</div>
     <div class="fixture-meta">
-      <span>Ambiance</span>
+      <span>État du club</span>
       <strong>${state.morale}%</strong>
     </div>
   `;
@@ -229,22 +226,10 @@ function renderFixture() {
 
 function renderCAF() {
   dom.cafBox.innerHTML = `
-    <div class="caf-stage">
-      <span>Phase</span>
-      <strong>${state.caf.phase}</strong>
-    </div>
-    <div class="caf-stage">
-      <span>Forme</span>
-      <strong>${state.caf.form}</strong>
-    </div>
-    <div class="caf-stage">
-      <span>Dernier résultat</span>
-      <strong>${state.caf.score}</strong>
-    </div>
-    <div class="caf-stage">
-      <span>Différence</span>
-      <strong>${state.caf.goalDiff >= 0 ? '+' : ''}${state.caf.goalDiff}</strong>
-    </div>
+    <div class="caf-stage"><span>Phase</span><strong>${state.caf.phase}</strong></div>
+    <div class="caf-stage"><span>Forme</span><strong>${state.caf.form}</strong></div>
+    <div class="caf-stage"><span>Dernier résultat</span><strong>${state.caf.score}</strong></div>
+    <div class="caf-stage"><span>Différence</span><strong>${state.caf.goalDiff >= 0 ? '+' : ''}${state.caf.goalDiff}</strong></div>
   `;
 }
 
@@ -349,6 +334,19 @@ function updateCAFProgress(result) {
   }
 }
 
+function triggerRandomEvent() {
+  const events = [
+    'Un sponsor majeur renforce le budget du club pour la semaine.',
+    'Un joueur talentueux demande une place plus centrale dans le onze.',
+    'Une blessure légère touche un titulaire, il faudra gérer le groupe.',
+    'La presse locale met le club en avant pour un bon parcours.'
+  ];
+
+  const selected = events[Math.floor(Math.random() * events.length)];
+  state.eventText = selected;
+  addLog(selected);
+}
+
 function simulateMatch() {
   const fixture = getCurrentFixture();
   if (!fixture) {
@@ -386,8 +384,9 @@ function simulateMatch() {
   state.budget += 180_000;
   state.reputation += 1;
 
-  addLog(`Match contre ${fixture.opponent} : ${ourGoals} - ${opponentGoals}.`);
+  if (Math.random() > 0.7) triggerRandomEvent();
 
+  addLog(`Match contre ${fixture.opponent} : ${ourGoals} - ${opponentGoals}.`);
   render();
   saveState();
 }
@@ -396,9 +395,10 @@ function trainTeam() {
   const focus = getFocusBonus();
   state.players = state.players.map((player) => {
     let bonus = 0;
-    if (player.position.toLowerCase().includes('attaque') || player.position.toLowerCase().includes('attaquant') || player.position.toLowerCase().includes('ailier')) {
+    const lower = player.position.toLowerCase();
+    if (lower.includes('attaqu') || lower.includes('ailier') || lower.includes('milieu')) {
       bonus = focus.attack;
-    } else if (player.position.toLowerCase().includes('déf')) {
+    } else if (lower.includes('déf') || lower.includes('gard')) {
       bonus = focus.defense;
     } else {
       bonus = focus.attack * 0.7 + focus.defense * 0.7;
@@ -421,16 +421,14 @@ function nextDay() {
   state.budget += 240_000;
   state.morale = clamp(state.morale - 2, 35, 100);
   state.reputation += 1;
+  if (Math.random() > 0.6) triggerRandomEvent();
   addLog(`Journée ${state.day} : le club avance dans sa préparation et sécurise la suite de la saison.`);
   render();
   saveState();
 }
 
 function recruitBestPlayer() {
-  const best = state.market
-    .slice()
-    .sort((a, b) => b.rating - a.rating)[0];
-
+  const best = state.market.slice().sort((a, b) => b.rating - a.rating)[0];
   if (!best) {
     addLog('Le mercato est vide pour le moment.');
     render();
@@ -444,7 +442,7 @@ function recruitBestPlayer() {
   }
 
   state.budget -= best.price;
-  state.players.push({ ...best, name: best.name, position: best.position, rating: best.rating });
+  state.players.push({ ...best });
   state.market = state.market.filter((player) => player.name !== best.name);
   state.reputation += 4;
   addLog(`${best.name} a été recruté pour ${formatMoney(best.price)}. C’est un coup de maître.`);
@@ -453,9 +451,19 @@ function recruitBestPlayer() {
 }
 
 function resetGame() {
-  state = structuredClone(defaultState);
+  state = createDefaultState();
   saveState();
   render();
+}
+
+function showGame() {
+  dom.startOverlay.classList.add('hidden');
+  dom.gameShell.classList.remove('hidden');
+}
+
+function hideGame() {
+  dom.startOverlay.classList.remove('hidden');
+  dom.gameShell.classList.add('hidden');
 }
 
 function render() {
@@ -467,6 +475,20 @@ function render() {
   renderStandings();
   renderLog();
 }
+
+dom.newGameBtn.addEventListener('click', () => {
+  state = createDefaultState();
+  state.difficulty = dom.startDifficulty.value;
+  saveState();
+  showGame();
+  render();
+});
+
+dom.continueBtn.addEventListener('click', () => {
+  state.difficulty = dom.startDifficulty.value;
+  showGame();
+  render();
+});
 
 dom.trainBtn.addEventListener('click', trainTeam);
 dom.matchBtn.addEventListener('click', simulateMatch);
@@ -485,4 +507,5 @@ dom.difficultySelect.addEventListener('change', (event) => {
 });
 
 render();
+showGame();
 saveState();

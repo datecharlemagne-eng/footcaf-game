@@ -64,6 +64,45 @@ select {
   margin-top: 0.35rem;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.start-overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: rgba(2, 10, 17, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 10;
+}
+
+.start-panel {
+  width: min(460px, calc(100vw - 2rem));
+  background: rgba(13, 29, 45, 0.97);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  padding: 1.5rem 1.3rem;
+  box-shadow: 0 24px 50px rgba(0,0,0,0.28);
+}
+
+.start-panel h2 {
+  margin-bottom: 1.2rem;
+}
+
+.start-actions {
+  display: flex;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.select-wrap {
+  display: block;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
 .app-shell {
   max-width: 1200px;
   margin: 0 auto;
@@ -320,8 +359,10 @@ h1 {
 @media (max-width: 840px) {
   .stats-grid,
   .main-grid,
-  .mg-controls {
+  .mg-controls,
+  .start-actions {
     grid-template-columns: 1fr;
+    display: grid;
   }
 
   .club-header,

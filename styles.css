@@ -7,7 +7,26 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="app-shell">
+    <div id="start-overlay" class="start-overlay">
+      <div class="start-panel">
+        <p class="eyebrow">FootCAF</p>
+        <h2>Manager de club africain</h2>
+        <div class="start-actions">
+          <button id="new-game-btn">Nouvelle partie</button>
+          <button id="continue-btn" class="ghost">Continuer</button>
+        </div>
+        <label class="select-wrap">
+          <span>Difficulté</span>
+          <select id="start-difficulty">
+            <option value="Facile">Facile</option>
+            <option value="Moyen" selected>Moyen</option>
+            <option value="Difficile">Difficile</option>
+          </select>
+        </label>
+      </div>
+    </div>
+
+    <div class="app-shell hidden" id="game-shell">
       <header class="header">
         <div class="club-header">
           <div>
@@ -48,9 +67,10 @@
             <h2>Équipe</h2>
             <button id="train-btn">Entraînement</button>
           </div>
+
           <div class="mg-controls">
             <label>
-              Focus d’entraînement
+              <span>Focus d’entraînement</span>
               <select id="training-focus">
                 <option value="Attaque">Attaque</option>
                 <option value="Défense">Défense</option>
@@ -58,14 +78,15 @@
               </select>
             </label>
             <label>
-              Difficulté
+              <span>Difficulté</span>
               <select id="difficulty-select">
                 <option value="Facile">Facile</option>
-                <option value="Moyen" selected>Moyen</option>
+                <option value="Moyen">Moyen</option>
                 <option value="Difficile">Difficile</option>
               </select>
             </label>
           </div>
+
           <div id="team-list" class="team-list"></div>
         </section>
 
